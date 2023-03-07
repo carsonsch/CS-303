@@ -19,6 +19,8 @@ void test_list()
     list.pop_back();
     list.print();
 
+    // I expect the list to be 3, 5, 2, 1, 999 at this point.
+
     std::cout << "Empty: " << list.empty() << std::endl;
     std::cout << "Size: " << list.item_count() << std::endl;
     std::cout << "Front: " << list.front() << std::endl;

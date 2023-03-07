@@ -12,6 +12,7 @@ SinglyLinkedList<T>::SinglyLinkedList() : head(nullptr), tail(nullptr), num_item
 template <typename T>
 SinglyLinkedList<T>::~SinglyLinkedList()
 {
+    // Deallocate all nodes in the list
     Node<T>* cur = head;
     while (cur != nullptr)
     {
@@ -24,30 +25,35 @@ SinglyLinkedList<T>::~SinglyLinkedList()
 template <typename T>
 void SinglyLinkedList<T>::push_front(const T& data)
 {
+    // Add item to front of list.
     insert(0, data);
 }
 
 template <typename T>
 void SinglyLinkedList<T>::push_back(const T& data)
 {
+    // Add item to back of list
     insert(num_items, data);
 }
 
 template <typename T>
 void SinglyLinkedList<T>::pop_front()
 {
+    // Remove item at front of list. Does nothing if the list is already empty.
     remove(0);
 }
 
 template <typename T>
 void SinglyLinkedList<T>::pop_back()
 {
+    // Remove item at back of list. Does nothing if the list is already empty.
     remove(num_items - 1);
 }
 
 template <typename T>
 T SinglyLinkedList<T>::front() const
 {
+    // Gets the first item in the list. Throws error if list is empty.
     if (empty())
         throw std::runtime_error("Cannot get front of empty list.");
 
@@ -57,6 +63,7 @@ T SinglyLinkedList<T>::front() const
 template <typename T>
 T SinglyLinkedList<T>::back() const
 {
+    // Gets the last item in the list. Throws error if list is empty.
     if (empty())
         throw new std::runtime_error("Cannot get back of empty list.");
 
@@ -73,9 +80,12 @@ template <typename T>
 void SinglyLinkedList<T>::insert(size_t index, const T& new_item)
 {
     Node<T>* new_node = new Node<T>(nullptr, new_item);
+    // If the index to insert to is larger than the list,
+    // just set it to insert at the end of the list.
     if (index > num_items)
         index = num_items;
 
+    // If there are no items in the list already, set both head and tail to the new node.
     if (num_items == 0)
     {
         head = tail = new_node;
@@ -83,6 +93,7 @@ void SinglyLinkedList<T>::insert(size_t index, const T& new_item)
         return;
     }
 
+    // Optimized case for adding item to front of list.
     if (index == 0)
     {
         new_node->set_next(head);
@@ -97,6 +108,7 @@ void SinglyLinkedList<T>::insert(size_t index, const T& new_item)
     prev->set_next(new_node);
     new_node->set_next(next);
 
+    // Make sure to keep tail in sync if we are inserting to the end of the list.
     if (index == num_items)
     {
         tail = new_node;
@@ -108,9 +120,12 @@ void SinglyLinkedList<T>::insert(size_t index, const T& new_item)
 template <typename T>
 bool SinglyLinkedList<T>::remove(size_t index)
 {
+    // If the list is already empty, do nothing.
+    // If the index is larger than the list, return false to indicate failure.
     if (empty() || index > num_items - 1)
         return false;
 
+    // Optimized case for deleting the head node.
     if (index == 0)
     {
         Node<T>* deleted = head;
@@ -119,6 +134,7 @@ bool SinglyLinkedList<T>::remove(size_t index)
         delete deleted;
         num_items--;
 
+        // Set tail to nullptr if we just deleted the last item of the list.
         if (num_items == 0)
             tail = nullptr;
 
@@ -132,6 +148,7 @@ bool SinglyLinkedList<T>::remove(size_t index)
 
     delete deleted;
 
+    // Keep tail in sync if we deleted the last item in the list.
     if (index == num_items - 1)
     {
         tail = prev;
@@ -144,6 +161,8 @@ bool SinglyLinkedList<T>::remove(size_t index)
 template <typename T>
 size_t SinglyLinkedList<T>::find(const T& find_item)
 {
+    // Iterate over all nodes, returning the index as soon as we find a
+    // node with matching data.
     Node<T>* cur = head;
     size_t cur_pos = 0;
 
@@ -159,11 +178,13 @@ size_t SinglyLinkedList<T>::find(const T& find_item)
     return num_items;
 }
 
+// Print each item in the list to cout.
 template <typename T>
 void SinglyLinkedList<T>::print() const
 {
     std::cout << "List contents:" << std::endl;
 
+    // Loop through entire list, continuing as long as the current node isn't a nullptr.
     Node<T>* cur = head;
     while (cur != nullptr)
     {
@@ -180,6 +201,7 @@ size_t SinglyLinkedList<T>::item_count() const
     return num_items;
 }
 
+// Gets the node with the specified index.
 template <typename T>
 Node<T>* SinglyLinkedList<T>::get_node_at_index(size_t index) const
 {
@@ -189,6 +211,8 @@ Node<T>* SinglyLinkedList<T>::get_node_at_index(size_t index) const
     Node<T>* cur = head;
     size_t cur_pos = 0;
 
+    // Keep iterating to the next node until we land on the node
+    // with the index we are looking for.
     while (cur_pos < index)
     {
         cur = cur->get_next();

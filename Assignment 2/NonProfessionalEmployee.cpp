@@ -13,6 +13,7 @@ NonProfessionalEmployee::NonProfessionalEmployee(std::string first_name, std::st
 
 float NonProfessionalEmployee::calc_weekly_pay() const
 {
+    // Weekly pay is hourly rate * hours worked in the week.
     return hourly_pay * weekly_hours_worked;
 }
 

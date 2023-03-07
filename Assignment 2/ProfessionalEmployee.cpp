@@ -12,6 +12,7 @@ ProfessionalEmployee::ProfessionalEmployee(std::string first_name, std::string l
 
 float ProfessionalEmployee::calc_weekly_pay() const
 {
+    // Get weekly salary by dividing monthly salary by four.
     return get_monthly_salary() / 4;
 }
 
