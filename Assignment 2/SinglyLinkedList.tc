@@ -1,0 +1,199 @@
+#include <exception>
+#include <iostream>
+
+#include "SinglyLinkedList.hpp"
+#include "Node.hpp"
+
+template <typename T>
+SinglyLinkedList<T>::SinglyLinkedList() : head(nullptr), tail(nullptr), num_items(0)
+{
+}
+
+template <typename T>
+SinglyLinkedList<T>::~SinglyLinkedList()
+{
+    Node<T>* cur = head;
+    while (cur != nullptr)
+    {
+        Node<T>* next = cur->get_next();
+        delete cur;
+        cur = next;
+    }
+}
+
+template <typename T>
+void SinglyLinkedList<T>::push_front(const T& data)
+{
+    insert(0, data);
+}
+
+template <typename T>
+void SinglyLinkedList<T>::push_back(const T& data)
+{
+    insert(num_items, data);
+}
+
+template <typename T>
+void SinglyLinkedList<T>::pop_front()
+{
+    remove(0);
+}
+
+template <typename T>
+void SinglyLinkedList<T>::pop_back()
+{
+    remove(num_items - 1);
+}
+
+template <typename T>
+T SinglyLinkedList<T>::front() const
+{
+    if (empty())
+        throw std::runtime_error("Cannot get front of empty list.");
+
+    return head->get_value();
+}
+
+template <typename T>
+T SinglyLinkedList<T>::back() const
+{
+    if (empty())
+        throw new std::runtime_error("Cannot get back of empty list.");
+
+    return tail->get_value();
+}
+
+template <typename T>
+bool SinglyLinkedList<T>::empty() const
+{
+    return num_items == 0;
+}
+
+template <typename T>
+void SinglyLinkedList<T>::insert(size_t index, const T& new_item)
+{
+    Node<T>* new_node = new Node<T>(nullptr, new_item);
+    if (index > num_items)
+        index = num_items;
+
+    if (num_items == 0)
+    {
+        head = tail = new_node;
+        num_items++;
+        return;
+    }
+
+    if (index == 0)
+    {
+        new_node->set_next(head);
+        head = new_node;
+        num_items++;
+        return;
+    }
+
+    Node<T>* prev = get_node_at_index(index - 1);
+    Node<T>* next = prev->get_next();
+
+    prev->set_next(new_node);
+    new_node->set_next(next);
+
+    if (index == num_items)
+    {
+        tail = new_node;
+    }
+
+    num_items++;
+}
+
+template <typename T>
+bool SinglyLinkedList<T>::remove(size_t index)
+{
+    if (empty() || index > num_items - 1)
+        return false;
+
+    if (index == 0)
+    {
+        Node<T>* deleted = head;
+        head = head->get_next();
+
+        delete deleted;
+        num_items--;
+
+        if (num_items == 0)
+            tail = nullptr;
+
+        return true;
+    }
+
+    Node<T>* prev = get_node_at_index(index - 1);
+    Node<T>* deleted = prev->get_next();
+
+    prev->set_next(deleted->get_next());
+
+    delete deleted;
+
+    if (index == num_items - 1)
+    {
+        tail = prev;
+    }
+
+    num_items--;
+    return true;
+}
+
+template <typename T>
+size_t SinglyLinkedList<T>::find(const T& find_item)
+{
+    Node<T>* cur = head;
+    size_t cur_pos = 0;
+
+    while (cur != nullptr)
+    {
+        if (cur->get_value() == find_item)
+            return cur_pos;
+        
+        cur = cur->get_next();
+        cur_pos++;
+    }
+
+    return num_items;
+}
+
+template <typename T>
+void SinglyLinkedList<T>::print() const
+{
+    std::cout << "List contents:" << std::endl;
+
+    Node<T>* cur = head;
+    while (cur != nullptr)
+    {
+        std::cout << cur->get_value() << std::endl;
+        cur = cur->get_next();
+    }
+
+    std::cout << std::endl;
+}
+
+template <typename T>
+size_t SinglyLinkedList<T>::item_count() const
+{
+    return num_items;
+}
+
+template <typename T>
+Node<T>* SinglyLinkedList<T>::get_node_at_index(size_t index) const
+{
+    if (empty() || index > (num_items - 1))
+        throw std::out_of_range("Index is not within bounds of list.");
+
+    Node<T>* cur = head;
+    size_t cur_pos = 0;
+
+    while (cur_pos < index)
+    {
+        cur = cur->get_next();
+        cur_pos++;
+    }
+
+    return cur;
+}
